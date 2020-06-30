@@ -204,6 +204,23 @@ class SeedlinkPlotter(tkinter.Tk):
                             pad=True, nearest_sample=False)
             else:
                 stream.merge(-1)
+                #print(stream.traces[0].data)
+                #spike_array = np.zeros(len(stream.traces[0].data))
+                #spike_array[10000:] = stream.traces[0].data[10000:]
+                #stream.traces[0].data = spike_array
+                #.append(stream.traces[0].data[1000:])
+                #print(stream.traces[0].data)
+                #print(len(stream.traces[0].data))
+                stream.filter("lowpass", freq=0.1)
+                stream.filter("highpass", freq=0.01)
+                #print(len(stream.traces[0].data))
+                flat_len = 6000
+                mean_val = np.mean(stream.traces[0].data[6000:])
+                flat_start = np.zeros(len(stream.traces[0].data))
+                for i in range(flat_len):
+                    flat_start[i] = mean_val
+                #[flat_start[i] = mean_val for i in range(flat_len)]
+                stream.traces[0].data[0:flat_len] = flat_start[0:flat_len]
                 stream.trim(starttime=self.start_time, endtime=self.stop_time)
             if self.drum_plot:
                 self.plot_drum(stream)
